@@ -18,7 +18,8 @@ from PyDictionary import PyDictionary
 
 my_id = { "work" : "nihalghanathe@gmail.com", "personal":"nihal999nez@gmail.com", "test":"testdie9@gmail.com"}
 to_id = { "nez" : "nihal999nez@gmail.com", "nikhil" : "nikhilghanathe@gmail.com", "uma": "pratapuma12@gmail.com","gf":"birajdarsandhya@gmail.com","cool":"coolmothi@gmail.com"}
-
+greetings_keyword = ["hello", "hi", "greetings", "sup", "whats up","what's up"]
+greetings_response = ["'sup nez", "hey", "hi", "hey you get my snap?","hello nez"]
 # Speaks
 def speak(audioString):
     print(audioString)
@@ -50,12 +51,14 @@ def recordAudio():
 
 # Operates on commands
 def JASS(text):
-	if text == "are you alright":
+	if "you alright" in text:
 		speak("Yes Nez, thank you for asking")
+
 
 ################### ACCESSING GMAIL #############################
 
-	elif text == "do i have any emails":
+	elif "do i have any emails" in text:
+		
 		SERVER = "pop.gmail.com"
 		USER  = "testdie9"
 		PASSWORD = "diego_12"
@@ -90,15 +93,16 @@ def JASS(text):
 
 		speak('you have received email from '+from1+' on '+date+' about '+subject)
 
-	elif text == "are you up":
+	elif "you up" in text:
 		speak("For you Nez, always")
 
-	elif text == "send an email":
+
+##################### SENDING AN EMAIL ############################
+	elif "send an email" in text:
 		speak("sure")
 		time.sleep(0.5)
 		speak("from which email would you like to send?")
 		fro = recordAudio()
-		print fro
 		fro = my_id[str(fro)]
 		time.sleep(0.5)
 		speak("who would you like to send the email to?")
@@ -125,24 +129,31 @@ def JASS(text):
 		server.sendmail(fro, to, text)
 		server.quit()
 
-	elif text == "what is your name":
+	elif "is your name" in text:
 		speak("i am JASS")
 
-	elif text == "who are you":
+	elif "who are you" in text:
 		speak("i am your personal assistant")
 
-	elif text == "thank you":
+	elif "thank you" in text:
 		speak("no problem nez, happy to help")
 
-	elif text == "how are you":
+	elif "how are you" in text:
 		speak("i'm fine thank you")
+
+##################################### SHUTTING DOWN ###############################################
 
 	elif "you take some rest now" in text or "go to sleep" in text:
 		speak("Alright, see you soon")
 		sys.exit(0)
 
+################################## TELL THE TIME ###################################################
+
+
 	elif "what time is it" in text:
 		speak(ctime())
+
+################################## DISPLAY LOCATION #################################################
 
 	elif "where is" in text:
 		text = text.split(" ")
@@ -150,6 +161,8 @@ def JASS(text):
 		speak("Hold on Nez, I will show you where " + location + " is.")
 		os.system("gksu -u nihal google-chrome https://www.google.nl/maps/place/" + location + "/&amp;")
 
+
+#################################### DO SOME ARITHMETIC ##############################################
 	elif "multiply" in text:
 		data = text.split(" ")
 		speak(data[1]+" multiplied by "+data[3]+" is "+str(float(data[1])*float(data[3])))
@@ -165,6 +178,8 @@ def JASS(text):
 	elif "divide" in text:
 		data = text.split(" ")
 		speak(data[1]+" divided by "+data[3]+" is "+str(float(data[1])/float(data[3])))		
+
+#################################### GENERAL QUERIES ####################################################
 
 	elif "what is" in text:
 
@@ -191,45 +206,55 @@ def JASS(text):
 			chrome_path = 'gksu -u nihal google-chrome %s'
 			webbrowser.get(chrome_path).open(url)
 
+######################################### DICTIONARY MEANING ###########################################3
+
 	elif "define" in text:
 		searchstr = text.split(" ")
-		searchstr = searchstr[1]
+		searchstr = searchstr[1:]
+		searchstr = "+".join(searchstr)
 		dictionary=PyDictionary()
 		result = dictionary.meaning(searchstr)
-		if 'Noun' in result:
-			if len(result['Noun']) > 1:
-				speak("as a noun "+searchstr+" has "+str(len(result['Noun']))+" definitions ")
-				time.sleep(0.5)
-				speak("they are")
-				for i in result['Noun']:
-					speak(i)
+		if result:
+			if 'Noun' in result:
+				if result['Noun'] != None and len(result['Noun']) > 1:
+					speak("as a noun "+searchstr+" has "+str(len(result['Noun']))+" definitions ")
 					time.sleep(0.5)
+					speak("they are")
+					for i in result['Noun']:
+						speak(i)
+						time.sleep(0.5)
+				else:
+					speak("as a noun "+searchstr+" has the following meaning")
+					time.sleep(0.5)
+					for i in result['Noun']:
+						speak(i)
+						time.sleep(0.5)
 			else:
-				speak("as a noun "+searchstr+" has the following meaning")
-				time.sleep(0.5)
-				for i in result['Noun']:
-					speak(i)
-					time.sleep(0.5)
+				speak("no definition found for noun")
 
-		if 'Verb' in result:
-			if len(result['Verb']) > 1:
-				speak("as a verb "+searchstr+" has "+str(len(result['Verb']))+" definitions ")
-				time.sleep(0.5)
-				speak("they are")
-				for i in result['Verb']:
-					speak(i)
+			if 'Verb' in result:
+				if result['Verb'] != None and len(result['Verb']) > 1:
+					speak("as a verb "+searchstr+" has "+str(len(result['Verb']))+" definitions ")
 					time.sleep(0.5)
+					speak("they are")
+					for i in result['Verb']:
+						speak(i)
+						time.sleep(0.5)
+				else:
+					speak("as a verb "+searchstr+" has the following meaning ")
+					time.sleep(0.5)
+					for i in result['verb']:
+						speak(i)
+						time.sleep(0.5)
 			else:
-				speak("as a verb "+searchstr+" has the following meaning ")
-				time.sleep(0.5)
-				for i in result['verb']:
-					speak(i)
-					time.sleep(0.5)
-
+				speak("no definition found for verb")
+		#print "#####################################################################", searchstr
 		speak("for more information on "+searchstr+" here is the google page")
 		url = "https://www.google.com/search?q=" + searchstr
 		chrome_path = 'gksu -u nihal google-chrome %s'
 		webbrowser.get(chrome_path).open(url)
+
+################################ IF FUNCTIONALITY NOT DEFINED #########################################################
 
 	else:
 		speak('i\'m sorry i dont understand. Please speak again')
@@ -237,7 +262,21 @@ def JASS(text):
 
 # initialization
 time.sleep(2)
-speak("Hello Nez, what can I do for you?")
+a = (ctime())
+if int(a[11:13]) <= 4:
+	speak("You are up pretty late nez, i would suggest you to get some sleep")
+elif int(a[11:13]) > 4 and int(a[11:13]) <= 6:
+	speak("Good morning nez, you are up pretty early today")
+elif int(a[11:13]) > 6 and int(a[11:13]) < 12:
+	speak("good morning nez, what can i do for you")
+elif int(a[11:13]) >= 12 and int(a[11:13]) < 15:
+	speak("good afternoon nez, what can i do for you")
+elif int(a[11:13]) >= 15:
+	speak("good evening nez, what can i do for you")
+
+def reminder(data):
+
+
 while 1:
     data = recordAudio()
     data = data.lower()
