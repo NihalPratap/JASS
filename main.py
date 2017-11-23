@@ -248,14 +248,28 @@ def JASS(text):
 						time.sleep(0.5)
 			else:
 				speak("no definition found for verb")
-		#print "#####################################################################", searchstr
+
 		speak("for more information on "+searchstr+" here is the google page")
 		url = "https://www.google.com/search?q=" + searchstr
 		chrome_path = 'gksu -u nihal google-chrome %s'
 		webbrowser.get(chrome_path).open(url)
 
-################################ IF FUNCTIONALITY NOT DEFINED #########################################################
+	
+######################################## YOUTUBE SEARCH ################################################
 
+	elif "search youtube for" in text:
+		searchstr = text.split(" ")
+		searchstr = searchstr[3:]
+		searchstr = "+".join(searchstr)
+		print searchstr
+		url = "https://www.youtube.com/results?search_query="+searchstr
+		chrome_path = 'gksu -u nihal google-chrome %s'
+		webbrowser.get(chrome_path).open(url)
+
+	elif "hold on" or "standby" in text:
+		speak("standing by")
+		sys.exit(0)
+################################ IF FUNCTIONALITY NOT DEFINED #########################################################
 	else:
 		speak('i\'m sorry i dont understand. Please speak again')
  
@@ -274,10 +288,10 @@ elif int(a[11:13]) >= 12 and int(a[11:13]) < 15:
 elif int(a[11:13]) >= 15:
 	speak("good evening nez, what can i do for you")
 
-def reminder(data):
+#def reminder(data):
 
 
 while 1:
-    data = recordAudio()
-    data = data.lower()
-    JASS(data)
+	data = recordAudio()
+	data = data.lower()
+	JASS(data)

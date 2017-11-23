@@ -33,11 +33,12 @@ def recordAudio():
     return data
 
 def check(string):
-	if "you up" in string or "jass" in string or "J" in string:
+	if "you up" in string or "jass" in string or "j" in string:
 		os.system('python main.py')
 	else:
 		time.sleep(2)
 
 while 1:
 	data = recordAudio()
+	data = data.lower()
 	check(data)
