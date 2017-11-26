@@ -15,11 +15,14 @@ from email import encoders
 import sys
 import webbrowser
 from PyDictionary import PyDictionary
+import random
+import re
 
 my_id = { "work" : "nihalghanathe@gmail.com", "personal":"nihal999nez@gmail.com", "test":"testdie9@gmail.com"}
-to_id = { "nez" : "nihal999nez@gmail.com", "nikhil" : "nikhilghanathe@gmail.com", "uma": "pratapuma12@gmail.com","gf":"birajdarsandhya@gmail.com","cool":"coolmothi@gmail.com"}
+to_id = { "nez" : "nihal999nez@gmail.com", "nikhil" : "nikhilghanathe@gmail.com", "uma": "pratapuma12@gmail.com", "gf":"birajdarsandhya@gmail.com", "cool":"coolmothi@gmail.com"}
 greetings_keyword = ["hello", "hi", "greetings", "sup", "whats up","what's up"]
-greetings_response = ["'sup nez", "hey", "hi", "hey you get my snap?","hello nez"]
+greetings_response = ["what's up nez","'sup nez", "hey", "hi", "hey you get my snap?","hello nez"]
+
 # Speaks
 def speak(audioString):
     print(audioString)
@@ -54,10 +57,13 @@ def JASS(text):
 	if "you alright" in text:
 		speak("Yes Nez, thank you for asking")
 
+	elif text in greetings_keyword:
+		speak(random.choice(greetings_response))
+
 
 ################### ACCESSING GMAIL #############################
 
-	elif "do i have any emails" in text:
+	elif "do i have any emails" in text or "do i have any email" in text:
 		
 		SERVER = "pop.gmail.com"
 		USER  = "testdie9"
@@ -91,11 +97,17 @@ def JASS(text):
 		subject = message['Subject']
 		date = message['Date']
 
-		speak('you have received email from '+from1+' on '+date+' about '+subject)
+		speak('you have received email from '+from1)
+		time.sleep(0.5)
+		speak(' on '+date[:16])
+		time.sleep(0.5)
+		speak(' about '+subject)
 
 	elif "you up" in text:
 		speak("For you Nez, always")
 
+	elif "you listening to me" in text or "you listening" in text:
+		speak("yes nez")
 
 ##################### SENDING AN EMAIL ############################
 	elif "send an email" in text:
@@ -150,7 +162,7 @@ def JASS(text):
 ################################## TELL THE TIME ###################################################
 
 
-	elif "what time is it" in text:
+	elif "what time is it" in text or "what is the time" in text or "what's the time" in text:
 		speak(ctime())
 
 ################################## DISPLAY LOCATION #################################################
@@ -164,20 +176,25 @@ def JASS(text):
 
 #################################### DO SOME ARITHMETIC ##############################################
 	elif "multiply" in text:
-		data = text.split(" ")
-		speak(data[1]+" multiplied by "+data[3]+" is "+str(float(data[1])*float(data[3])))
+		data = re.findall('\d+', text)
+		speak(data[0]+" multiplied by "+data[1]+" is "+str(float(data[0])*float(data[1])))
 
 	elif "add" in text:
-		data = text.split(" ")
-		speak(data[1]+" plus "+data[3]+" is "+str(float(data[1])+float(data[3])))		
+		data = re.findall('\d+', text)
+		speak(data[0]+" plus "+data[1]+" is "+str(float(data[0])+float(data[1])))		
 
 	elif "subtract" in text:
-		data = text.split(" ")
-		speak(data[1]+" minus "+data[3]+" is "+str(float(data[1])-float(data[3])))
+		data = re.findall('\d+', text)
+		speak(data[0]+" minus "+data[1]+" is "+str(float(data[0])-float(data[1])))
 
 	elif "divide" in text:
-		data = text.split(" ")
-		speak(data[1]+" divided by "+data[3]+" is "+str(float(data[1])/float(data[3])))		
+		data = re.findall('\d+', text)
+		speak(data[0]+" divided by "+data[1]+" is "+str(float(data[0])/float(data[1])))
+
+	elif "power" in text:
+		data = re.findall('\d+', text)
+		speak(data[0]+" to the power "+data[1]+" is "+str(float(data[0])**float(data[1])))
+
 
 #################################### GENERAL QUERIES ####################################################
 
@@ -249,10 +266,12 @@ def JASS(text):
 			else:
 				speak("no definition found for verb")
 
+		else:
+			speak("meaning not found")
+
 		speak("for more information on "+searchstr+" here is the google page")
-		url = "https://www.google.com/search?q=" + searchstr
-		chrome_path = 'gksu -u nihal google-chrome %s'
-		webbrowser.get(chrome_path).open(url)
+		os.system("gksu -u nihal google-chrome https://www.google.com/search?q=" + searchstr)
+		
 
 	
 ######################################## YOUTUBE SEARCH ################################################
@@ -260,15 +279,17 @@ def JASS(text):
 	elif "search youtube for" in text:
 		searchstr = text.split(" ")
 		searchstr = searchstr[3:]
+		speak("here are the results for "+" ".join(searchstr))
 		searchstr = "+".join(searchstr)
-		print searchstr
-		url = "https://www.youtube.com/results?search_query="+searchstr
+		os.system("gksu -u nihal google-chrome https://www.youtube.com/results?search_query="+searchstr)
+		'''url = "https://www.youtube.com/results?search_query="+searchstr
 		chrome_path = 'gksu -u nihal google-chrome %s'
-		webbrowser.get(chrome_path).open(url)
+		webbrowser.get(chrome_path).open(url)'''
 
-	elif "hold on" or "standby" in text:
+	elif "hold on" in text or "standby" in text:
 		speak("standing by")
 		sys.exit(0)
+
 ################################ IF FUNCTIONALITY NOT DEFINED #########################################################
 	else:
 		speak('i\'m sorry i dont understand. Please speak again')
