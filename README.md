@@ -1,2 +1,2 @@
 # JASS
-Just Another Smart System
+Just Another Smart System - Virtual Speech Assistant 
